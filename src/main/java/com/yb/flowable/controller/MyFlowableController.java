@@ -31,7 +31,7 @@ public class MyFlowableController {
      * @return
      */
     @PostMapping("/start")
-    public ResponseResult<Object> startVacation(@Valid @RequestBody Vacation vacation) {
+    public ResponseResult<Object> startVacation(@Valid @RequestBody Vacation vacation ) {
         String result = myFlowableService.startVacation(vacation);
         return ResponseResult.successResultData(result);
     }
@@ -88,7 +88,5 @@ public class MyFlowableController {
         List<Vacation> result = myFlowableService.queryMyAuditRecord(userName);
         return ResponseResult.successResultData(result);
     }
-
-
 
 }

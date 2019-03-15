@@ -40,9 +40,12 @@ public class MyFlowableService {
         //为流程添加StartUserId(开始流程用户)--不添加则在后面通过
         //processEngine.getRuntimeService().createProcessInstanceQuery().startedBy(jack).list()
         //不能获取到内容,而且这个设置必须在流程开始之前进行设置
+        //authenticatedUserId：当前已通过身份验证的用户的ID,如果没有用户通过身份验证,则该变量不可用
         processEngine.getIdentityService().setAuthenticatedUserId(vacation.getApplyUser());
         //开始流程
         ProcessInstance instance = processEngine.getRuntimeService().startProcessInstanceByKey(PROCESS_KEY);
+        //可以在开始流程的时候设置为流程设置变量
+        ProcessInstance in = processEngine.getRuntimeService().startProcessInstanceByKey(PROCESS_KEY,new HashMap<String, Object>(){{put("hah","hello-word");}});
         //查询当前任务
         Task task = processEngine.getTaskService().createTaskQuery().processInstanceId(instance.getId()).singleResult();
         //申明任务属于谁

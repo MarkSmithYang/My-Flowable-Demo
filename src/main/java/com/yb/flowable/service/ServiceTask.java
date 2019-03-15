@@ -16,5 +16,14 @@ public class ServiceTask implements JavaDelegate {
     @Override
     public void execute(DelegateExecution execution) {
         System.err.println("我直接放假了啦啦啦");
+        //getVariable(String variableName, boolean fetchAllVariables);
+        //当对参数fetchAllVariables使用true时，行为将完全如上所述：获取或设置变量时，将获取并缓存所有其他变量。
+        //但是，当使用false作为值时，将使用特定查询，并且不会获取或缓存其他变量
+        Object hah = execution.getVariable("hah", false);//这个由于没有设置在流程中,所以为空
+        Object days = execution.getVariable("days", false);
+        Object reason = execution.getVariable("reason", true);
+        System.err.println(hah);
+        System.err.println(days);
+        System.err.println(reason);
     }
 }
