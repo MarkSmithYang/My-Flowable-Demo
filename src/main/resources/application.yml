@@ -8,4 +8,4 @@ spring:
     password: root
 #注意流程图的xml需要放在resources的processes文件夹下,没有需要创建
 server:
-  port: 8082
+  port: 8083

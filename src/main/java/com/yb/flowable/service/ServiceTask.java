@@ -22,8 +22,10 @@ public class ServiceTask implements JavaDelegate {
         Object hah = execution.getVariable("hah", false);//这个由于没有设置在流程中,所以为空
         Object days = execution.getVariable("days", false);
         Object reason = execution.getVariable("reason", true);
-        System.err.println(hah);
-        System.err.println(days);
-        System.err.println(reason);
+        Object applyUser = execution.getVariable("applyUser", true);
+        System.err.println("hah==="+hah);
+        System.err.println("days==="+days);
+        System.err.println("reason==="+reason);
+        System.err.println("applyUser==="+applyUser);
     }
 }

@@ -1,18 +1,31 @@
 package com.yb.flowable.service;
 
+import com.yb.flowable.exception.ParameterErrorException;
 import com.yb.flowable.request.Vacation;
 import com.yb.flowable.request.VacationTask;
 import com.yb.flowable.utils.FlowableUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.engine.ProcessEngine;
+import org.flowable.engine.ProcessEngineConfiguration;
 import org.flowable.engine.history.HistoricProcessInstance;
+import org.flowable.engine.runtime.Execution;
 import org.flowable.engine.runtime.ProcessInstance;
+import org.flowable.image.ProcessDiagramGenerator;
 import org.flowable.task.api.Task;
+import org.flowable.task.api.TaskQuery;
 import org.flowable.task.api.history.HistoricTaskInstance;
 import org.flowable.variable.api.history.HistoricVariableInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import javax.swing.plaf.OptionPaneUI;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.*;
 
 /**
@@ -45,7 +58,9 @@ public class MyFlowableService {
         //开始流程
         ProcessInstance instance = processEngine.getRuntimeService().startProcessInstanceByKey(PROCESS_KEY);
         //可以在开始流程的时候设置为流程设置变量
-        ProcessInstance in = processEngine.getRuntimeService().startProcessInstanceByKey(PROCESS_KEY,new HashMap<String, Object>(){{put("hah","hello-word");}});
+        ProcessInstance in = processEngine.getRuntimeService().startProcessInstanceByKey(PROCESS_KEY, new HashMap<String, Object>() {{
+            put("hah", "hello-word");
+        }});
         //查询当前任务
         Task task = processEngine.getTaskService().createTaskQuery().processInstanceId(instance.getId()).singleResult();
         //申明任务属于谁
@@ -254,4 +269,71 @@ public class MyFlowableService {
         return "操作成功";
     }
 
+    /**
+     * 下载(查看)流程图(PNG),未被标红的是没有开始的流程
+     *
+     * @param response
+     * @param processId
+     */
+    public void generateProcessDiagram(HttpServletResponse response, String processId) throws IOException {
+        //初始化一个封装id的集合
+        List<String> activitys = new ArrayList<>();
+        //根据流程实例id获取流程实例-->可以不查看(下载)已经完成的流程通过流程,
+        //想看已经完成的流程图的话可以通过History查询去查询操作接口
+        ProcessInstance instance = processEngine.getRuntimeService().createProcessInstanceQuery()
+                .processInstanceId(processId).singleResult();
+        if (instance == null) {
+            ParameterErrorException.message("查询流程不存在或者流程已经走完了");
+        }
+        //获取当前进行中的任务--(没有意义,看到网上通过task去获取processDefinitionId)
+        Task task = processEngine.getTaskService().createTaskQuery()
+                .processInstanceId(instance.getId()).singleResult();
+        //其实可以直接通过流程实例获取流程的定义id的
+        String processDefinitionId = instance.getProcessDefinitionId();
+        //通过流程定义id获取正在执行的对象列表
+        List<Execution> list = processEngine.getRuntimeService().createExecutionQuery()
+                .processDefinitionId(processDefinitionId).list();
+        //判断并处理程序
+        if (CollectionUtils.isNotEmpty(list)) {
+            list.forEach(execution -> {
+                List<String> ids = processEngine.getRuntimeService().getActiveActivityIds(execution.getId());
+                //把id添加到集合里
+                activitys.addAll(ids);
+            });
+        }
+        //获取流程图模型
+        BpmnModel bpmnModel = processEngine.getRepositoryService().getBpmnModel(instance.getProcessDefinitionId());
+        //获取流程图表生成对象
+        ProcessEngineConfiguration engconf = processEngine.getProcessEngineConfiguration();
+        ProcessDiagramGenerator generator = engconf.getProcessDiagramGenerator();
+        //获取流程图的流文件
+        //实测这个流能生成图,但是任务名称全是框框样的乱码,而且正在活动的任务没有被标红
+        InputStream is = generator.generatePngDiagram(bpmnModel, true);
+        //实测这个流也能生成图,而且任务名称全是框框样的乱码,而且正在活动的任务没有被标红
+        InputStream in = generator.generatePngDiagram(bpmnModel, 1.0, false);
+        //实测这个流能生成图,正在活动的任务没有被标红,并且人物名没有乱码
+        InputStream inputStream = generator.generateDiagram(bpmnModel, "png", activitys, new ArrayList<>(),
+                engconf.getActivityFontName(), engconf.getLabelFontName(), engconf.getAnnotationFontName(),
+                engconf.getClassLoader(), 1.0, false);
+        //声明变量
+        OutputStream outputStream = null;
+        byte[] bytes = new byte[1024];
+        int length;
+        try {
+            //获取响应流
+            outputStream = response.getOutputStream();
+            //输出流文件
+            while ((length = inputStream.read(bytes)) != -1) {
+                outputStream.write(bytes, 0, length);
+            }
+        } finally {
+            //关闭流
+            if (outputStream != null) {
+                outputStream.close();
+            }
+            if (inputStream != null) {
+                inputStream.close();
+            }
+        }
+    }
 }
