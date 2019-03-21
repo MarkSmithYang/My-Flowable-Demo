@@ -5,7 +5,9 @@ import com.yb.flowable.request.Vacation;
 import com.yb.flowable.request.VacationTask;
 import com.yb.flowable.utils.FlowableUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.flowable.bpmn.model.BpmnModel;
+import org.flowable.common.engine.impl.util.IoUtil;
 import org.flowable.engine.ProcessEngine;
 import org.flowable.engine.ProcessEngineConfiguration;
 import org.flowable.engine.history.HistoricProcessInstance;
@@ -19,6 +21,7 @@ import org.flowable.variable.api.history.HistoricVariableInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import sun.nio.ch.IOUtil;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -275,7 +278,7 @@ public class MyFlowableService {
      * @param response
      * @param processId
      */
-    public void generateProcessDiagram(HttpServletResponse response, String processId) throws IOException {
+    public void generateProcessDiagram(HttpServletResponse response, String processId){
         //初始化一个封装id的集合
         List<String> activitys = new ArrayList<>();
         //根据流程实例id获取流程实例-->可以不查看(下载)已经完成的流程通过流程,
@@ -326,14 +329,15 @@ public class MyFlowableService {
             while ((length = inputStream.read(bytes)) != -1) {
                 outputStream.write(bytes, 0, length);
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         } finally {
-            //关闭流
-            if (outputStream != null) {
-                outputStream.close();
-            }
-            if (inputStream != null) {
-                inputStream.close();
-            }
+            //tomcat文件上传IoUtils工具关闭流
+            //IOUtils.closeQuietly(outputStream);
+            //IOUtils.closeQuietly(inputStream);
+            //flowable自带的IoUtil工具关闭流-->(尽量使用这个吧,这个没有用多态,而且是flowable的)
+            IoUtil.closeSilently(outputStream);//后用先关
+            IoUtil.closeSilently(inputStream);//先用后关
         }
     }
 }

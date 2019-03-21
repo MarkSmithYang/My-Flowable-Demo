@@ -5,6 +5,7 @@ import com.yb.flowable.request.Vacation;
 import com.yb.flowable.request.VacationTask;
 import com.yb.flowable.service.MyFlowableService;
 import org.flowable.engine.ProcessEngine;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -37,7 +38,7 @@ public class MyFlowableController {
      * @return
      */
     @PostMapping("/start")
-    public ResponseResult<Object> startVacation(@Valid @RequestBody Vacation vacation ) {
+    public ResponseResult<Object> startVacation(@Valid @RequestBody Vacation vacation) {
         String result = myFlowableService.startVacation(vacation);
         return ResponseResult.successResultData(result);
     }
@@ -48,17 +49,24 @@ public class MyFlowableController {
      * @return
      */
     @GetMapping("/queryMyVacation")
-    public ResponseResult<Object> queryMyVacation(@RequestParam String userName) {
+    public ResponseResult<Object> queryMyVacation(
+            @Length(max = 30, message = "用户名有误")
+            @NotBlank(message = "用户名不能为空")
+            @RequestParam String userName) {
         List<Vacation> result = myFlowableService.queryMyVacation(userName);
         return ResponseResult.successResultData(result);
     }
 
     /**
      * 查询我的请假记录
+     *
      * @return
      */
     @GetMapping("/myVacationRecord")
-    public ResponseResult<Object> myVacationRecord(@RequestParam String userName) {
+    public ResponseResult<Object> myVacationRecord(
+            @Length(max = 30, message = "用户名有误")
+            @NotBlank(message = "用户名不能为空")
+            @RequestParam String userName) {
         List<Vacation> result = myFlowableService.myVacationRecord(userName);
         return ResponseResult.successResultData(result);
     }
@@ -67,16 +75,21 @@ public class MyFlowableController {
 
     /**
      * 查询我的审批信息
+     *
      * @return
      */
     @GetMapping("/queryMyAudit")
-    public ResponseResult<Object> queryMyAudit(@RequestParam String userName) {
+    public ResponseResult<Object> queryMyAudit(
+            @Length(max = 30, message = "用户名有误")
+            @NotBlank(message = "用户名不能为空")
+            @RequestParam String userName) {
         List<VacationTask> result = myFlowableService.queryMyAudit(userName);
         return ResponseResult.successResultData(result);
     }
 
     /**
      * 通过审批
+     *
      * @return
      */
     @PostMapping("/passAudit")
@@ -87,10 +100,14 @@ public class MyFlowableController {
 
     /**
      * 查询我的审批记录
+     *
      * @return
      */
     @GetMapping("/queryMyAuditRecord")
-    public ResponseResult<Object> queryMyAuditRecord(@RequestParam String userName) {
+    public ResponseResult<Object> queryMyAuditRecord(
+            @Length(max = 30, message = "用户名有误")
+            @NotBlank(message = "用户名不能为空")
+            @RequestParam String userName) {
         List<Vacation> result = myFlowableService.queryMyAuditRecord(userName);
         return ResponseResult.successResultData(result);
     }
@@ -99,10 +116,14 @@ public class MyFlowableController {
 
     /**
      * 下载(查看)流程图(PNG),未被标红的是没有开始的流程
+     *
      * @param processId
      */
-    @GetMapping(value = "/generateProcessDiagram",produces = MediaType.IMAGE_PNG_VALUE)
-    public void generateProcessDiagram(HttpServletResponse response, @RequestParam @NotBlank(message = "流程id不能为空") String processId) throws IOException {
-        myFlowableService.generateProcessDiagram(response,processId);
+    @GetMapping(value = "/generateProcessDiagram", produces = MediaType.IMAGE_PNG_VALUE)
+    public void generateProcessDiagram(HttpServletResponse response,
+                                       @Length(max = 100, message = "流程id有误")
+                                       @NotBlank(message = "流程id不能为空")
+                                       @RequestParam String processId) {
+        myFlowableService.generateProcessDiagram(response, processId);
     }
 }
