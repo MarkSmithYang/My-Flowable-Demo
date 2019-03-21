@@ -16,7 +16,9 @@ import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 /**
- * Description:flowable的用户接口类
+ * Description:flowable的用户接口类---->一般业务结合工作流使用的时候,
+ * 为了方便不去做用户同步或者其他的东西,就是不在flowable存储过多的东西,
+ * 只是存储流程必要的用户信息(一般就是用户名),其他的权限等认证就使用原有系统的那一套东西
  * author biaoyang
  * date 2019/3/15 00159:53
  */
