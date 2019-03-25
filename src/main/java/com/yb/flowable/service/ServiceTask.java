@@ -13,6 +13,10 @@ public class ServiceTask implements JavaDelegate {
 
     private Expression text;
 
+    /**
+     * 其实自动流程这里和那个任课老师审批不应该用并行网关,用排他网关更好,或者直接在任课老师审批之后,现在懒得改了
+     * @param execution
+     */
     @Override
     public void execute(DelegateExecution execution) {
         System.err.println("我直接放假了啦啦啦");

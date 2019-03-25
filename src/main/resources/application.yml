@@ -6,6 +6,23 @@ spring:
     url: jdbc:postgresql://localhost:5432/flowable?characterEncoding=utf8
     username: postgres
     password: root
+    #微服务名
+  application:
+    name: flowable
 #注意流程图的xml需要放在resources的processes文件夹下,没有需要创建
 server:
   port: 8083
+
+#eureka相关的配置,只要是相同注册中心注册的eureka服务就能直接通过微服务名调用这个flowable服务
+eureka:
+#  instance:
+#    hostname: localhost
+  client:
+    service-url:
+      defaultZone: http://localhost:8771/eureka/
+#关于actuator监控springboot2.x暴露所有端点,可以也可以选择性的放开如info/health等
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

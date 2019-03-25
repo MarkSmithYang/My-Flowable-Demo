@@ -43,11 +43,22 @@
             <version>42.2.5</version>
         </dependency>
         <!--引入flowable依赖idea画的流程图无法使用(他会含有$SYSTEM_TIME$),而xml解析不了,可能是idea的插件版本有问题,
-        建议使用flowable官方的那个软件-->
+        建议使用flowable官方的那个软件,flowable-spring-boot-starter和flowable-spring-boot-starter-basic网上都有用的-->
         <dependency>
             <groupId>org.flowable</groupId>
             <artifactId>flowable-spring-boot-starter-basic</artifactId>
             <version>6.4.1</version>
+        </dependency>
+        <!--eureka服务的依赖-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+            <version>2.1.1.RELEASE</version>
+        </dependency>
+        <!--actuator是监控系统健康情况的工具-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
         <!--测试依赖-->
         <dependency>
