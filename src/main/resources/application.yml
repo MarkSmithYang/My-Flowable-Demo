@@ -6,6 +6,16 @@ spring:
     url: jdbc:postgresql://localhost:5432/flowable?characterEncoding=utf8
     username: postgres
     password: root
+    #hikari的自定义配置(覆盖默认的配置)
+  hikari:
+    connection-timeout: 10000
+    data-source-properties:
+      cachePrepStmts: true
+      prepStmtCacheSize: 250
+      prepStmtCacheSqlLimit: 2048
+      useServerPrepStmts: true
+    maximum-pool-size: 100
+    type: com.zaxxer.hikari.HikariDataSource
     #微服务名
   application:
     name: flowable
@@ -15,11 +25,11 @@ server:
 
 #eureka相关的配置,只要是相同注册中心注册的eureka服务就能直接通过微服务名调用这个flowable服务
 eureka:
-#  instance:
-#    hostname: localhost
+  #  instance:
+  #    hostname: localhost
   client:
     service-url:
-      defaultZone: http://localhost:8771/eureka/
+      defaultZone: http://localhost:8870/eureka/
 #关于actuator监控springboot2.x暴露所有端点,可以也可以选择性的放开如info/health等
 management:
   endpoints:

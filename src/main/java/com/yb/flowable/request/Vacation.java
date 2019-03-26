@@ -1,5 +1,8 @@
 package com.yb.flowable.request;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Max;
@@ -13,6 +16,8 @@ import java.util.Date;
  * author biaoyang
  * date 2019/3/12 001218:02
  */
+@Setter
+@Getter//实测,当此工程打成jar包以后运行,也没有报错,说明lombok是可以的在项目里运行的,而idea安不安装插件根本与之无关
 public class Vacation {
 
     private String id;
@@ -42,75 +47,4 @@ public class Vacation {
     //审核日期
     private Date auditDate;
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getApplyUser() {
-        return applyUser;
-    }
-
-    public void setApplyUser(String applyUser) {
-        this.applyUser = applyUser;
-    }
-
-    public String getReason() {
-        return reason;
-    }
-
-    public void setReason(String reason) {
-        this.reason = reason;
-    }
-
-    public String getApplyStatus() {
-        return applyStatus;
-    }
-
-    public void setApplyStatus(String applyStatus) {
-        this.applyStatus = applyStatus;
-    }
-
-    public double getDays() {
-        return days;
-    }
-
-    public void setDays(double days) {
-        this.days = days;
-    }
-
-    public Date getApplyDate() {
-        return applyDate;
-    }
-
-    public void setApplyDate(Date applyDate) {
-        this.applyDate = applyDate;
-    }
-
-    public String getAuditor() {
-        return auditor;
-    }
-
-    public void setAuditor(String auditor) {
-        this.auditor = auditor;
-    }
-
-    public String getAuditResult() {
-        return auditResult;
-    }
-
-    public void setAuditResult(String auditResult) {
-        this.auditResult = auditResult;
-    }
-
-    public Date getAuditDate() {
-        return auditDate;
-    }
-
-    public void setAuditDate(Date auditDate) {
-        this.auditDate = auditDate;
-    }
 }

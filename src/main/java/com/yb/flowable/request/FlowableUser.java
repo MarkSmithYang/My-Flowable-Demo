@@ -1,5 +1,7 @@
 package com.yb.flowable.request;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
@@ -9,6 +11,8 @@ import javax.validation.constraints.NotBlank;
  * author biaoyang
  * date 2019/3/15 001510:01
  */
+@Setter
+@Getter
 public class FlowableUser {
 
     //用户名
@@ -23,27 +27,4 @@ public class FlowableUser {
     @Length(max = 20,message = "用户组不能超过20字")
     private String groupName;
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getGroupName() {
-        return groupName;
-    }
-
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
-    }
 }
