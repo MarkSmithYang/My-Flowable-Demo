@@ -29,10 +29,14 @@ eureka:
   #    hostname: localhost
   client:
     service-url:
-      defaultZone: http://localhost:8870/eureka/
+      defaultZone: http://localhost:8080/eureka-server/eureka/
 #关于actuator监控springboot2.x暴露所有端点,可以也可以选择性的放开如info/health等
 management:
   endpoints:
     web:
       exposure:
         include: "*"
+
+#logback日志配置
+logging:
+  file: ./log/${spring.application.name}.log
